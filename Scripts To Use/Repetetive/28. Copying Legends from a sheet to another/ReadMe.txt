@@ -1,0 +1,1 @@
+This script can copy legends, schedules from one sheet to multiple sheets. 

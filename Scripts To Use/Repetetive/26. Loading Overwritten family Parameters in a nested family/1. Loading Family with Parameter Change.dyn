@@ -1,0 +1,472 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Loading Family with Parameter Change",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "3b363d5a7492473ca762c3b600522cc2",
+      "Name": "Directory Path",
+      "Type": "string",
+      "Value": "C:\\Users\\130\\Desktop\\EWS-20 TYPE 05",
+      "Description": "Allows you to select a directory on the system to get its path"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.Directory, CoreNodeModels",
+      "HintPath": "C:\\Users\\130\\Desktop\\EWS-20 TYPE 05",
+      "InputValue": "C:\\Users\\130\\Desktop\\EWS-20 TYPE 05",
+      "NodeType": "ExtensionNode",
+      "Id": "3b363d5a7492473ca762c3b600522cc2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5eef072ced5542379950fa46284e6a6a",
+          "Name": "",
+          "Description": "Directory",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows you to select a directory on the system to get its path"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "*.rfa",
+      "Id": "144c37dceac4454785971d41ba6eaea5",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "25da469794ce458fa3668167435f4a76",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Orchid.Common.Directory.Contents@string,string,bool,bool",
+      "Id": "c3e23558caca453bbd687560f258c8df",
+      "Inputs": [
+        {
+          "Id": "af6c64d0383a4244a4c4e138d39ca022",
+          "Name": "directory",
+          "Description": "Directory to get contents from.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9ed7f4908361447aa710f002093f0973",
+          "Name": "searchString",
+          "Description": "Search string used to filter results.\n\nstring\nDefault value : \"*\"",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fb9b6a9571444c4bb2fc09bd078480cb",
+          "Name": "deepSearch",
+          "Description": "Apply searching in all subfolders?\n\nbool\nDefault value : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "de8a0930f4614f9889467fcd0c335547",
+          "Name": "condense",
+          "Description": "Condense to shortest feasible output?\n\nbool\nDefault value : true",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "373a48f523aa4b72b5ea03e3842e3fec",
+          "Name": "file",
+          "Description": "File.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the files in a directory and its subdirectories. Use string for extension type, default is * for all files! If files are are readonly but not hidden, are they included. If files are both hidden or readonly files (and thereby system files) are they left out.\n\nDirectory.Contents (directory: string, searchString: string = \"*\", deepSearch: bool = false, condense: bool = true): var[]..[]"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nclass FamilyOption(IFamilyLoadOptions) :\r\n\tdef OnFamilyFound(self, familyInUse, overwriteParameterValues):\r\n\t\toverwriteParameterValues.Value = True\r\n\t\treturn True\r\n\r\n\tdef OnSharedFamilyFound(self, sharedFamily, familyInUse, source, overwriteParameterValues):\r\n\t\toverwriteParameterValues.Value = True\r\n\t\treturn True\r\n\r\ntoList = lambda x : x if hasattr(x, '__iter__') else [x]\r\npathsFamily = toList(IN[0])\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\nloadedFam = []\r\nopts = FamilyOption()\r\nfor path in pathsFamily :\r\n\trefFam = clr.Reference[Family]()\r\n\tdoc.LoadFamily(path, opts, refFam)\r\n\tloadedFam.append(refFam.Value)\r\n\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\nOUT = loadedFam",
+      "VariableInputPorts": true,
+      "Id": "3d5a1251250d431c97d7ff704bc29edc",
+      "Inputs": [
+        {
+          "Id": "a2c05c4c0f124fe0bf0fb1de4e0094a2",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ab4a286e255d49edbcdf8110f3e9ddae",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 256,
+      "SelectedString": "OST_GenericModel",
+      "NodeType": "ExtensionNode",
+      "Id": "e32770d4c8974eedbd49d0f30e8ddb1b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0094fb2ac13040ea8255c13350e8b878",
+          "Name": "Category",
+          "Description": "The selected Category.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All built-in categories."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.ElementsOfCategory, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "Id": "3b8557751a6540108292545ccb73320f",
+      "Inputs": [
+        {
+          "Id": "d4c8917b059545819369532d855d82db",
+          "Name": "Category",
+          "Description": "The Category",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "23709193e4074017971971e9a9321548",
+          "Name": "Elements",
+          "Description": "An element type.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Get all elements of the specified category from the model."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr #This is .NET's Common Language Runtime. It's an execution environment\r\n#that is able to execute code from several different languages.\r\nimport sys #sys is a fundamental Python library - here, we're using it to load in\r\n#the standard IronPython libraries\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib') #Imports the\r\n#standard IronPython libraries, which cover everything from servers and\r\n#encryption through to regular expressions.\r\nimport System #The System namespace at the root of .NET\r\nfrom System import Array #.NET class for handling array information\r\nfrom System.Collections.Generic import * #Lets you handle generics. Revit's API\r\n#sometimes wants hard-typed 'generic' lists, called ILists. If you don't need\r\n#these you can delete this line.\r\nclr.AddReference('ProtoGeometry')  #A Dynamo library for its proxy geometry\r\n#classes. You'll only need this if you're interacting with geometry.\r\nfrom Autodesk.DesignScript.Geometry import * #Loads everything in Dynamo's\r\n#geometry library\r\nclr.AddReference(\"RevitNodes\") #Dynamo's nodes for Revit\r\nimport Revit #Loads in the Revit namespace in RevitNodes\r\nclr.ImportExtensions(Revit.Elements) #More loading of Dynamo's Revit libraries\r\nclr.ImportExtensions(Revit.GeometryConversion) #More loading of Dynamo's\r\n#Revit libraries. You'll only need this if you're interacting with geometry.\r\nclr.AddReference(\"RevitServices\") #Dynamo's classes for handling Revit documents\r\nimport RevitServices \r\nfrom RevitServices.Persistence import DocumentManager #An internal Dynamo class\r\n#that keeps track of the document that Dynamo is currently attached to\r\nfrom RevitServices.Transactions import TransactionManager #A Dynamo class for\r\n#opening and closing transactions to change the Revit document's database\r\n\r\nclr.AddReference(\"RevitAPI\") #Adding reference to Revit's API DLLs\r\nclr.AddReference(\"RevitAPIUI\") #Adding reference to Revit's API DLLs\r\n\r\nimport Autodesk #Loads the Autodesk namespace\r\nfrom Autodesk.Revit.DB import * #Loading Revit's API classes\r\nfrom Autodesk.Revit.UI import * #Loading Revit's API UI classes  \r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument #Finally, setting up handles to the active Revit document\r\nuiapp = DocumentManager.Instance.CurrentUIApplication #Setting a handle to the active Revit UI document\r\napp = uiapp.Application  #Setting a handle to the currently-open instance of the Revit application\r\nuidoc = uiapp.ActiveUIDocument #Setting a handle to the currently-open instance of the Revit UI application\r\n\r\n\r\nimport re\r\n\r\n#############Code####################\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\ninp=IN[0]\r\n\r\ngeneric_model=[]\r\nfor elem in inp:\r\n\tel=UnwrapElement(elem)\r\n\tgeneric_model.append(el)\r\n\r\n\r\nnames=[]\r\nfor elem in generic_model:\r\n\tname=elem.Name\r\n\tnames.append(name)\r\n\t\r\npaths=IN[1]\r\n\r\ngeneric_path=[]\r\nfor path in paths:\r\n\tfor name in names:\r\n\t\tif re.findall(name,path):\r\n\t\t\tgeneric_path.append(path)\r\n\r\ngeneric_paths=set(generic_path)\r\n\r\nOUT = generic_paths",
+      "VariableInputPorts": true,
+      "Id": "bce1c8a762fd4278a18489b7458e6bb9",
+      "Inputs": [
+        {
+          "Id": "80fe3aa5c653406eb57da449f7ac2b24",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "585d7aaf3dfc48979ae4c5b876777f36",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ddcc152d1a95432e868fa07aa863415d",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.FromObject, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "b3cc4de0007343808349dd9e84a129d0",
+      "Inputs": [
+        {
+          "Id": "b8a9bbf94c264aec9a7ed7bed87b5ff9",
+          "Name": "obj",
+          "Description": "Object to be serialized",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8efd16be84004d22b080f6a7790f306e",
+          "Name": "str",
+          "Description": "Result of math computation",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Convert an object to a string representation."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr #This is .NET's Common Language Runtime. It's an execution environment\r\n#that is able to execute code from several different languages.\r\nimport sys #sys is a fundamental Python library - here, we're using it to load in\r\n#the standard IronPython libraries\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib') #Imports the\r\n#standard IronPython libraries, which cover everything from servers and\r\n#encryption through to regular expressions.\r\nimport System #The System namespace at the root of .NET\r\nfrom System import Array #.NET class for handling array information\r\nfrom System.Collections.Generic import * #Lets you handle generics. Revit's API\r\n#sometimes wants hard-typed 'generic' lists, called ILists. If you don't need\r\n#these you can delete this line.\r\nclr.AddReference('ProtoGeometry')  #A Dynamo library for its proxy geometry\r\n#classes. You'll only need this if you're interacting with geometry.\r\nfrom Autodesk.DesignScript.Geometry import * #Loads everything in Dynamo's\r\n#geometry library\r\nclr.AddReference(\"RevitNodes\") #Dynamo's nodes for Revit\r\nimport Revit #Loads in the Revit namespace in RevitNodes\r\nclr.ImportExtensions(Revit.Elements) #More loading of Dynamo's Revit libraries\r\nclr.ImportExtensions(Revit.GeometryConversion) #More loading of Dynamo's\r\n#Revit libraries. You'll only need this if you're interacting with geometry.\r\nclr.AddReference(\"RevitServices\") #Dynamo's classes for handling Revit documents\r\nimport RevitServices \r\nfrom RevitServices.Persistence import DocumentManager #An internal Dynamo class\r\n#that keeps track of the document that Dynamo is currently attached to\r\nfrom RevitServices.Transactions import TransactionManager #A Dynamo class for\r\n#opening and closing transactions to change the Revit document's database\r\n\r\nclr.AddReference(\"RevitAPI\") #Adding reference to Revit's API DLLs\r\nclr.AddReference(\"RevitAPIUI\") #Adding reference to Revit's API DLLs\r\n\r\nimport Autodesk #Loads the Autodesk namespace\r\nfrom Autodesk.Revit.DB import * #Loading Revit's API classes\r\nfrom Autodesk.Revit.UI import * #Loading Revit's API UI classes  \r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument #Finally, setting up handles to the active Revit document\r\nuiapp = DocumentManager.Instance.CurrentUIApplication #Setting a handle to the active Revit UI document\r\napp = uiapp.Application  #Setting a handle to the currently-open instance of the Revit application\r\nuidoc = uiapp.ActiveUIDocument #Setting a handle to the currently-open instance of the Revit UI application\r\nimport re\r\nsub1=\"0001.rfa$\"\r\nsub2=\"0002.rfa$\"\r\nsub3=\"0003.rfa$\"\r\nsub4=\"0002.0001.rfa$\"\r\nsub5=\"0004.rfa$\"\r\ngeneric_path=IN[0]\r\nfor index, path in enumerate(generic_path):\r\n\tif re.findall(sub1,path):\r\n\t\tdel generic_path[index]\r\nfor index, path in enumerate(generic_path):\r\n\tif re.findall(sub2,path):\r\n\t\tdel generic_path[index]\r\n\r\nfor index, path in enumerate(generic_path):\r\n\tif re.findall(sub3,path):\r\n\t\tdel generic_path[index]\r\n\r\nfor index, path in enumerate(generic_path):\r\n\tif re.findall(sub4,path):\r\n\t\tdel generic_path[index]\r\n\t\t\r\nfor index, path in enumerate(generic_path):\r\n\tif re.findall(sub5,path):\r\n\t\tdel generic_path[index]\r\n\t\r\ngeneric_paths=set(generic_path)\r\n\r\n\r\nOUT = generic_paths",
+      "VariableInputPorts": true,
+      "Id": "17958a8d024f4af290783292f9c71016",
+      "Inputs": [
+        {
+          "Id": "c89e33da6956479e80ae9e1e493298be",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "384e5fb6c91d4bbfae3cd135e93361e5",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "5eef072ced5542379950fa46284e6a6a",
+      "End": "af6c64d0383a4244a4c4e138d39ca022",
+      "Id": "b3048e32f6e045618f88421f4b039ec1"
+    },
+    {
+      "Start": "25da469794ce458fa3668167435f4a76",
+      "End": "fb9b6a9571444c4bb2fc09bd078480cb",
+      "Id": "b02d76c8394d43e69e6990e99fc6c68f"
+    },
+    {
+      "Start": "373a48f523aa4b72b5ea03e3842e3fec",
+      "End": "b8a9bbf94c264aec9a7ed7bed87b5ff9",
+      "Id": "c923ee3026ca416b9d0e873d3cf2bd07"
+    },
+    {
+      "Start": "0094fb2ac13040ea8255c13350e8b878",
+      "End": "d4c8917b059545819369532d855d82db",
+      "Id": "95c0ea3915c04afb9555c745d7f0aa20"
+    },
+    {
+      "Start": "23709193e4074017971971e9a9321548",
+      "End": "80fe3aa5c653406eb57da449f7ac2b24",
+      "Id": "4e5e3da986e04bd184018de03f1b8833"
+    },
+    {
+      "Start": "ddcc152d1a95432e868fa07aa863415d",
+      "End": "a2c05c4c0f124fe0bf0fb1de4e0094a2",
+      "Id": "e615a8675bfe4a00a062cad208dd6760"
+    },
+    {
+      "Start": "8efd16be84004d22b080f6a7790f306e",
+      "End": "c89e33da6956479e80ae9e1e493298be",
+      "Id": "fd971012e1204b6fb76d22160910b454"
+    },
+    {
+      "Start": "384e5fb6c91d4bbfae3cd135e93361e5",
+      "End": "585d7aaf3dfc48979ae4c5b876777f36",
+      "Id": "731349b7fc23419991cde0c6216b8d97"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [
+    {
+      "Name": "Orchid",
+      "Version": "206.3.0.7800",
+      "ReferenceType": "Package",
+      "Nodes": [
+        "c3e23558caca453bbd687560f258c8df"
+      ]
+    }
+  ],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Directory Path",
+        "Id": "3b363d5a7492473ca762c3b600522cc2",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -391.18357629060489,
+        "Y": 332.65493790865963
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "144c37dceac4454785971d41ba6eaea5",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -31.961499858876778,
+        "Y": 388.4673046818715
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Directory.Contents",
+        "Id": "c3e23558caca453bbd687560f258c8df",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 87.0255404246077,
+        "Y": 332.82814886982351
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "3d5a1251250d431c97d7ff704bc29edc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 929.93573914910655,
+        "Y": 290.0788225587844
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "e32770d4c8974eedbd49d0f30e8ddb1b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -159.32382068224484,
+        "Y": 60.012873037307031
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "All Elements of Category",
+        "Id": "3b8557751a6540108292545ccb73320f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 113.88788767246172,
+        "Y": 58.83498008623576
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "bce1c8a762fd4278a18489b7458e6bb9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 716.581476325779,
+        "Y": 284.79851454191015
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String from Object",
+        "Id": "b3cc4de0007343808349dd9e84a129d0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 360.302922117402,
+        "Y": 331.40637977660265
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "17958a8d024f4af290783292f9c71016",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 543.28826351160342,
+        "Y": 444.82554675393169
+      }
+    ],
+    "Annotations": [],
+    "X": 377.41282613638054,
+    "Y": 197.88966295191653,
+    "Zoom": 0.57216649090743321
+  }
+}

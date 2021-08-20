@@ -1,0 +1,1193 @@
+{
+  "Uuid": "0f62029a-c4c4-47fb-8fc2-ae957eceec4c",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Spliting elements horizontally",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr #This is .NET's Common Language Runtime. It's an execution environment\r\n#that is able to execute code from several different languages.\r\nimport sys #sys is a fundamental Python library - here, we're using it to load in\r\n#the standard IronPython libraries\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib') #Imports the\r\n#standard IronPython libraries, which cover everything from servers and\r\n#encryption through to regular expressions.\r\nimport System #The System namespace at the root of .NET\r\nfrom System import Array #.NET class for handling array information\r\nfrom System.Collections.Generic import * #Lets you handle generics. Revit's API\r\n#sometimes wants hard-typed 'generic' lists, called ILists. If you don't need\r\n#these you can delete this line.\r\nclr.AddReference('ProtoGeometry')  #A Dynamo library for its proxy geometry\r\n#classes. You'll only need this if you're interacting with geometry.\r\nfrom Autodesk.DesignScript.Geometry import * #Loads everything in Dynamo's\r\n#geometry library\r\nclr.AddReference(\"RevitNodes\") #Dynamo's nodes for Revit\r\nimport Revit #Loads in the Revit namespace in RevitNodes\r\nclr.ImportExtensions(Revit.Elements) #More loading of Dynamo's Revit libraries\r\nclr.ImportExtensions(Revit.GeometryConversion) #More loading of Dynamo's\r\n#Revit libraries. You'll only need this if you're interacting with geometry.\r\nclr.AddReference(\"RevitServices\") #Dynamo's classes for handling Revit documents\r\nimport RevitServices \r\nfrom RevitServices.Persistence import DocumentManager #An internal Dynamo class\r\n#that keeps track of the document that Dynamo is currently attached to\r\nfrom RevitServices.Transactions import TransactionManager #A Dynamo class for\r\n#opening and closing transactions to change the Revit document's database\r\n\r\nclr.AddReference(\"RevitAPI\") #Adding reference to Revit's API DLLs\r\nclr.AddReference(\"RevitAPIUI\") #Adding reference to Revit's API DLLs\r\n\r\nimport Autodesk #Loads the Autodesk namespace\r\nfrom Autodesk.Revit.DB import * #Loading Revit's API classes\r\nfrom Autodesk.Revit.UI import * #Loading Revit's API UI classes  \r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument #Finally, setting up handles to the active Revit document\r\nuiapp = DocumentManager.Instance.CurrentUIApplication #Setting a handle to the active Revit UI document\r\napp = uiapp.Application  #Setting a handle to the currently-open instance of the Revit application\r\nuidoc = uiapp.ActiveUIDocument #Setting a handle to the currently-open instance of the Revit UI application\r\n\r\ninp=[UnwrapElement(i) for i in IN[0]]\r\n\r\n\r\nsize=len(inp)\r\n\r\nname_general=\"Solid\"\r\nnew=[]\r\n\r\nfor i in range(size):\r\n\tname=name_general+' '+str(i+1)\r\n\tnew.append(name)\r\nOUT=new",
+      "VariableInputPorts": true,
+      "Id": "bfcbecc35bb34de5a6264bb30eabd85f",
+      "Inputs": [
+        {
+          "Id": "98eb6b5f4dc148dbbc001564f63787cf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "eb497a66e8614531bfa6cf814e052e0e",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Rhythm.Revit.Elements.Elements.SetParameterByNameTypeOrInstance@Revit.Elements.Element,string,var",
+      "Id": "feb7979ab20a4c9fab3275c15adf046d",
+      "Inputs": [
+        {
+          "Id": "a1921ba0e139424199f6a9ed7884217b",
+          "Name": "element",
+          "Description": "The element to set parameter to.\n\nElement",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a8740a9a18354b4ca98176faf8789c9d",
+          "Name": "parameterName",
+          "Description": "The parameter name.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d7c45180fbdc470ab4f0b3e8e7d76a52",
+          "Name": "value",
+          "Description": "The value to set.\n\nvar",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "aae0a313a18641059c016effcb693c1e",
+          "Name": "element",
+          "Description": "The element.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Set one of the element's parameters. Instance if it is instance or type if type.\n\nElements.SetParameterByNameTypeOrInstance (element: Element, parameterName: string, value: var): Element"
+    },
+    {
+      "ConcreteType": "Orchid.E.RevitMaterial.Material, OrchidRE",
+      "SelectedIndex": 48,
+      "SelectedString": "Default Mass Zone",
+      "NodeType": "ExtensionNode",
+      "Id": "ae5a1321469f4af487a9ef3b5b3a33e3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c3c12717a4f143d09d944cf10a5c09a2",
+          "Name": "Material",
+          "Description": "The selected Material",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Dropdown for materials"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Mark\";",
+      "Id": "0426860ada6446e1825954ea47424bf1",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "10356107f3364c46ad18b51a29db9490",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Solid.Volume",
+      "Id": "77764fc2a398471489e73456ba7190f8",
+      "Inputs": [
+        {
+          "Id": "3fa66c1f38c04bf3ac2676375d2c3543",
+          "Name": "solid",
+          "Description": "Autodesk.DesignScript.Geometry.Solid",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "541b93ccad074e07987570afd8aaa21a",
+          "Name": "double",
+          "Description": "double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "The total volume of the Solid\n\nSolid.Volume: double"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 303,
+      "SelectedString": "OST_Mass",
+      "NodeType": "ExtensionNode",
+      "Id": "284106ce940c4c63827a7a3c3f06d173",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8251b810c64b4578ba6b44e3c808cd6b",
+          "Name": "Category",
+          "Description": "The selected Category.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All built-in categories."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.DirectShape.ByGeometry@Autodesk.DesignScript.Geometry.Geometry,Revit.Elements.Category,Revit.Elements.Material,string",
+      "Id": "a0577963731f41f1a0497de344381488",
+      "Inputs": [
+        {
+          "Id": "78859c8457124eeb9b72ca87292334c2",
+          "Name": "geometry",
+          "Description": "A Solid or Surface that will be tessellated and placed in the Revit model as a DirectShape\n\nGeometry",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4fb078ee00fa4c60b126b68b8c466531",
+          "Name": "category",
+          "Description": "Must be a top level Built-in Category\n\nCategory",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "69436be4f8544c3c9bbc72c13b69a4dc",
+          "Name": "material",
+          "Description": "A Material to apply to the faces of the DirectShape\n\nMaterial\nDefault value : Revit.Elements.DirectShape.DynamoPreviewMaterial",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fa6ba52383df4f1fa4a4ef2f105889ca",
+          "Name": "name",
+          "Description": "A string name for the DirectShape\n\nstring\nDefault value : \"DirectShape\"",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "14f91f5e6b4f4d2f80feb21a828ceb5e",
+          "Name": "DirectShape",
+          "Description": "A DirectShape Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Create a Revit DirectShape given some geometry, a name for the shape, a Category, and Material. The geometry will be tessellated before being placed in the Revit model The category of a DirectShape cannot be changed after creation, so a new DirectShape will be generated if the category input is changed.\n\nDirectShape.ByGeometry (geometry: Geometry, category: Category, material: Material = Revit.Elements.DirectShape.DynamoPreviewMaterial, name: string = \"DirectShape\"): DirectShape"
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "8934c20a-5304-48bf-ba34-9806b1ea2bfb-00048871"
+      ],
+      "Id": "73604ef54c9c4771a16061e720103dfe",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8cece9d7295c4fb0af9164dfa14de1b7",
+          "Name": "Element",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.Solids",
+      "Id": "ebadade6a1364068ab0d66ca32c76625",
+      "Inputs": [
+        {
+          "Id": "8eec3da2f0d14e2683e9405559120559",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "fce043eb5ca34081a6f78e0db1ffa4c2",
+          "Name": "Solid[]",
+          "Description": "Solid[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "The Solids in this Element\n\nElement.Solids: Solid[]"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr #This is .NET's Common Language Runtime. It's an execution environment\r\n#that is able to execute code from several different languages.\r\nimport sys #sys is a fundamental Python library - here, we're using it to load in\r\n#the standard IronPython libraries\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib') #Imports the\r\n#standard IronPython libraries, which cover everything from servers and\r\n#encryption through to regular expressions.\r\nimport System #The System namespace at the root of .NET\r\nfrom System import Array #.NET class for handling array information\r\nfrom System.Collections.Generic import * #Lets you handle generics. Revit's API\r\n#sometimes wants hard-typed 'generic' lists, called ILists. If you don't need\r\n#these you can delete this line.\r\nclr.AddReference('ProtoGeometry')  #A Dynamo library for its proxy geometry\r\n#classes. You'll only need this if you're interacting with geometry.\r\nfrom Autodesk.DesignScript.Geometry import * #Loads everything in Dynamo's\r\n#geometry library\r\nclr.AddReference(\"RevitNodes\") #Dynamo's nodes for Revit\r\nimport Revit #Loads in the Revit namespace in RevitNodes\r\nclr.ImportExtensions(Revit.Elements) #More loading of Dynamo's Revit libraries\r\nclr.ImportExtensions(Revit.GeometryConversion) #More loading of Dynamo's\r\n#Revit libraries. You'll only need this if you're interacting with geometry.\r\nclr.AddReference(\"RevitServices\") #Dynamo's classes for handling Revit documents\r\nimport RevitServices \r\nfrom RevitServices.Persistence import DocumentManager #An internal Dynamo class\r\n#that keeps track of the document that Dynamo is currently attached to\r\nfrom RevitServices.Transactions import TransactionManager #A Dynamo class for\r\n#opening and closing transactions to change the Revit document's database\r\n\r\nclr.AddReference(\"RevitAPI\") #Adding reference to Revit's API DLLs\r\nclr.AddReference(\"RevitAPIUI\") #Adding reference to Revit's API DLLs\r\n\r\nimport Autodesk #Loads the Autodesk namespace\r\nfrom Autodesk.Revit.DB import * #Loading Revit's API classes\r\nfrom Autodesk.Revit.UI import * #Loading Revit's API UI classes  \r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument #Finally, setting up handles to the active Revit document\r\nuiapp = DocumentManager.Instance.CurrentUIApplication #Setting a handle to the active Revit UI document\r\napp = uiapp.Application  #Setting a handle to the currently-open instance of the Revit application\r\nuidoc = uiapp.ActiveUIDocument #Setting a handle to the currently-open instance of the Revit UI application\r\n\r\nsolids=IN[0]\r\nvolumes=IN[1]\r\nvol=[]\r\nsol=[]\r\nfor index, volume in enumerate(volumes):\r\n\tif volume not in vol:\r\n\t\tvol.append(volume)\r\n\t\tsol.append(solids[index])\r\nOUT= sol, vol\r\n",
+      "VariableInputPorts": true,
+      "Id": "97af4b1e838344599750a09988cb79f9",
+      "Inputs": [
+        {
+          "Id": "7eecebc705b44f258c54e7c7955ed856",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "858905ab1bec4a1a8cb28b6c4d4735df",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00427abfcf344066a441a8fe4e3b8119",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "a[1];",
+      "Id": "af992fb4f882411ca20471aed460170e",
+      "Inputs": [
+        {
+          "Id": "09a43e7975fb403dbc3fcf5758be4962",
+          "Name": "a",
+          "Description": "a",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7634bacdfff24852afca0c1b3c01269f",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "a[0];",
+      "Id": "4dc0519e60314e8ea67ff5bab0709611",
+      "Inputs": [
+        {
+          "Id": "86376932d1ee487c886c48bca96c014a",
+          "Name": "a",
+          "Description": "a",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b52ca80afa054c37b06964e84f34d134",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr #This is .NET's Common Language Runtime. It's an execution environment\r\n#that is able to execute code from several different languages.\r\nimport sys #sys is a fundamental Python library - here, we're using it to load in\r\n#the standard IronPython libraries\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib') #Imports the\r\n#standard IronPython libraries, which cover everything from servers and\r\n#encryption through to regular expressions.\r\nimport System #The System namespace at the root of .NET\r\nfrom System import Array #.NET class for handling array information\r\nfrom System.Collections.Generic import * #Lets you handle generics. Revit's API\r\n#sometimes wants hard-typed 'generic' lists, called ILists. If you don't need\r\n#these you can delete this line.\r\nclr.AddReference('ProtoGeometry')  #A Dynamo library for its proxy geometry\r\n#classes. You'll only need this if you're interacting with geometry.\r\nfrom Autodesk.DesignScript.Geometry import * #Loads everything in Dynamo's\r\n#geometry library\r\nclr.AddReference(\"RevitNodes\") #Dynamo's nodes for Revit\r\nimport Revit #Loads in the Revit namespace in RevitNodes\r\nclr.ImportExtensions(Revit.Elements) #More loading of Dynamo's Revit libraries\r\nclr.ImportExtensions(Revit.GeometryConversion) #More loading of Dynamo's\r\n#Revit libraries. You'll only need this if you're interacting with geometry.\r\nclr.AddReference(\"RevitServices\") #Dynamo's classes for handling Revit documents\r\nimport RevitServices \r\nfrom RevitServices.Persistence import DocumentManager #An internal Dynamo class\r\n#that keeps track of the document that Dynamo is currently attached to\r\nfrom RevitServices.Transactions import TransactionManager #A Dynamo class for\r\n#opening and closing transactions to change the Revit document's database\r\n\r\nclr.AddReference(\"RevitAPI\") #Adding reference to Revit's API DLLs\r\nclr.AddReference(\"RevitAPIUI\") #Adding reference to Revit's API DLLs\r\n\r\nimport Autodesk #Loads the Autodesk namespace\r\nfrom Autodesk.Revit.DB import * #Loading Revit's API classes\r\nfrom Autodesk.Revit.UI import * #Loading Revit's API UI classes  \r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument #Finally, setting up handles to the active Revit document\r\nuiapp = DocumentManager.Instance.CurrentUIApplication #Setting a handle to the active Revit UI document\r\napp = uiapp.Application  #Setting a handle to the currently-open instance of the Revit application\r\nuidoc = uiapp.ActiveUIDocument #Setting a handle to the currently-open instance of the Revit UI application\r\n\r\nsolid_orig=IN[0]\r\nsol_splits=IN[1]\r\n\r\nvol_orig=solid_orig[0].Volume\r\nvol_splits=[]\r\nvol=0\r\nfor i in sol_splits:\r\n\tvol=vol+i\r\n\r\nif vol_orig==vol:\r\n\tOUT= vol, vol_orig, \"Split Volume correct\"\r\nelif vol_orig>vol:\r\n\tOUT= vol, vol_orig, \"Split elements volume less than original volume. Splits are not complete\"\r\nelif vol_orig<vol:\r\n\tOUT= vol, vol_orig, \"Split volume more than original volume. Duplication of split volumes.\"\r\n\t",
+      "VariableInputPorts": true,
+      "Id": "5e60614b3bd04dc9a6f2ef2459efd68b",
+      "Inputs": [
+        {
+          "Id": "1ac27a70d4a4411cadba0c9313442259",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a4f4448e35ad47019fcc31990ff19fa0",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "87d9253f122140d5875fb6b687af6bcc",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a745c3",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a7464f",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74701",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a747c2",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a7484b",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a748ea",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74983",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74a31",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74ada",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74b71",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74c27",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74cd9",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74da4",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74e49",
+        "e7819d20-5070-4125-9b3d-a0299c6ba112-00a74edf"
+      ],
+      "Id": "a8969fde361e4f3db311e210fe6e2b0a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b5a76208756d4271adbce787bf58a782",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport sys\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n\r\nsolids=IN[0]\r\nsolid=solids[0]\r\nplanes=IN[1]\r\nsolids=[]\r\n\r\nfor ind, i in enumerate(planes):\r\n\tsol1=Geometry.Split(solid, i)\r\n\tif len(sol1)==2 and ind<len(planes):\r\n\t\tboo1=str(sol1[0].DoesIntersect(planes[ind+1]))\r\n\t\tif boo1==\"True\":\r\n\t\t\tsolid=sol1[0]\r\n\t\t\tsolids.append(sol1[1])\r\n\t\telse:\r\n\t\t\tsolid=sol1[1]\r\n\t\t\tsolids.append(sol1[0])\r\n\telse:\r\n\t\tsolids.append(solid)\r\n\t\r\n\t\r\nOUT=solids\r\n",
+      "VariableInputPorts": true,
+      "Id": "b75379a46d084a66b77e702ce90f7eec",
+      "Inputs": [
+        {
+          "Id": "0e9525ff1d81428ebb9507ef8f08ade2",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5db288dfdb664d89807ae1d45db42834",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "47c30930ba374d8c9224a5319df8b7f3",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Solid.Volume",
+      "Id": "b22c0b60a59a4e1dbcc2e008abab9528",
+      "Inputs": [
+        {
+          "Id": "a27701e4274e4d699140be00a943c63a",
+          "Name": "solid",
+          "Description": "Autodesk.DesignScript.Geometry.Solid",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "cec50c32421c415c857bc4a0f02d9125",
+          "Name": "double",
+          "Description": "double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "The total volume of the Solid\n\nSolid.Volume: double"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "cbe6db5e-3248-46ff-87e4-b620a1abf252",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "a2789bab506e458a865e465e8639e8f3",
+      "Inputs": [
+        {
+          "Id": "82002fa22fa94306a8e7cb9cdbbfe16f",
+          "Name": "level",
+          "Description": "Level",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a96837b6c23e44bbaed15894e2d151dc",
+          "Name": "plane",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Retrieves the plane of a given level"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Flatten@var[]..[],int",
+      "Id": "67243d8e303540f29ebef5f0c571e996",
+      "Inputs": [
+        {
+          "Id": "ba173474234445eaad4c00f8ed6de20f",
+          "Name": "list",
+          "Description": "List to flatten.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fbb2e2ec40584b65b6c4db03873becab",
+          "Name": "amt",
+          "Description": "Layers of nesting to remove.\n\nint\nDefault value : -1",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3270ba3dc9ea484fbc5594f0812312d2",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Flattens a nested list of lists by a certain amount.\n\nList.Flatten (list: var[]..[], amt: int = -1): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Flatten@var[]..[],int",
+      "Id": "262ddc6faa48404384c6b43d7404a0fe",
+      "Inputs": [
+        {
+          "Id": "032a763555014c2e973814ad1dbc2631",
+          "Name": "list",
+          "Description": "List to flatten.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9899ced74ee14386ab274a9ca063a0bb",
+          "Name": "amt",
+          "Description": "Layers of nesting to remove.\n\nint\nDefault value : -1",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "36fe8a631da54f7b92990c9caa86a138",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Flattens a nested list of lists by a certain amount.\n\nList.Flatten (list: var[]..[], amt: int = -1): var[]..[]"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 274,
+      "SelectedString": "OST_Levels",
+      "NodeType": "ExtensionNode",
+      "Id": "7f1beed7719a4118b43f0f7705dced47",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "68e52cb7aacc4dc2a9e81c326bc6341e",
+          "Name": "Category",
+          "Description": "The selected Category.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All built-in categories."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.ElementsOfCategory, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "Id": "9884fb4cfb5d4d32ba9403ba7cfde205",
+      "Inputs": [
+        {
+          "Id": "95e0b4ebe4f9497b89fcce247239bb4c",
+          "Name": "Category",
+          "Description": "The Category",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5ac31c9720ab45f8a7d5e613a91e313a",
+          "Name": "Elements",
+          "Description": "An element type.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Get all elements of the specified category from the model."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "eb497a66e8614531bfa6cf814e052e0e",
+      "End": "d7c45180fbdc470ab4f0b3e8e7d76a52",
+      "Id": "579e992903a94ac98a61b635f1774d16"
+    },
+    {
+      "Start": "eb497a66e8614531bfa6cf814e052e0e",
+      "End": "fa6ba52383df4f1fa4a4ef2f105889ca",
+      "Id": "7444517a8d7b4bc79efef4f8b52f1002"
+    },
+    {
+      "Start": "c3c12717a4f143d09d944cf10a5c09a2",
+      "End": "69436be4f8544c3c9bbc72c13b69a4dc",
+      "Id": "05cb02bded2a4bf592ecb6e7a9720741"
+    },
+    {
+      "Start": "10356107f3364c46ad18b51a29db9490",
+      "End": "a8740a9a18354b4ca98176faf8789c9d",
+      "Id": "88854bbd769b48a0a521e3b4d7aed3df"
+    },
+    {
+      "Start": "541b93ccad074e07987570afd8aaa21a",
+      "End": "858905ab1bec4a1a8cb28b6c4d4735df",
+      "Id": "408dc55fb30b43188077dcb8e2b3d1eb"
+    },
+    {
+      "Start": "8251b810c64b4578ba6b44e3c808cd6b",
+      "End": "4fb078ee00fa4c60b126b68b8c466531",
+      "Id": "b974035f7d7741d382445a7064322a55"
+    },
+    {
+      "Start": "14f91f5e6b4f4d2f80feb21a828ceb5e",
+      "End": "a1921ba0e139424199f6a9ed7884217b",
+      "Id": "2ee2da20798248b7897cb04888d5271c"
+    },
+    {
+      "Start": "8cece9d7295c4fb0af9164dfa14de1b7",
+      "End": "8eec3da2f0d14e2683e9405559120559",
+      "Id": "da154602ba0e4021bcf2daf015a651c9"
+    },
+    {
+      "Start": "fce043eb5ca34081a6f78e0db1ffa4c2",
+      "End": "1ac27a70d4a4411cadba0c9313442259",
+      "Id": "6ddb883f99f447a9a98fb96a588728fc"
+    },
+    {
+      "Start": "fce043eb5ca34081a6f78e0db1ffa4c2",
+      "End": "a27701e4274e4d699140be00a943c63a",
+      "Id": "d3dce489fe2f46689e535743f086c238"
+    },
+    {
+      "Start": "fce043eb5ca34081a6f78e0db1ffa4c2",
+      "End": "032a763555014c2e973814ad1dbc2631",
+      "Id": "e610c28b4e364203a722cc675a159451"
+    },
+    {
+      "Start": "00427abfcf344066a441a8fe4e3b8119",
+      "End": "09a43e7975fb403dbc3fcf5758be4962",
+      "Id": "1715fe93744b4ec8a48636920e67ffd9"
+    },
+    {
+      "Start": "00427abfcf344066a441a8fe4e3b8119",
+      "End": "86376932d1ee487c886c48bca96c014a",
+      "Id": "fe650c0216a0451881a9491ed95ee7c2"
+    },
+    {
+      "Start": "7634bacdfff24852afca0c1b3c01269f",
+      "End": "a4f4448e35ad47019fcc31990ff19fa0",
+      "Id": "1a719f58f295451c9593ef6b4cdd65d0"
+    },
+    {
+      "Start": "b52ca80afa054c37b06964e84f34d134",
+      "End": "78859c8457124eeb9b72ca87292334c2",
+      "Id": "8cd1d210a81d4e09abf29a8c6d9e6648"
+    },
+    {
+      "Start": "47c30930ba374d8c9224a5319df8b7f3",
+      "End": "98eb6b5f4dc148dbbc001564f63787cf",
+      "Id": "bc0520c7344e43308cf87808984b415c"
+    },
+    {
+      "Start": "47c30930ba374d8c9224a5319df8b7f3",
+      "End": "3fa66c1f38c04bf3ac2676375d2c3543",
+      "Id": "df9f8a10ca8349f6acbb0f03edce73bb"
+    },
+    {
+      "Start": "47c30930ba374d8c9224a5319df8b7f3",
+      "End": "7eecebc705b44f258c54e7c7955ed856",
+      "Id": "9e70d9f97f974ae7935319139771c45e"
+    },
+    {
+      "Start": "a96837b6c23e44bbaed15894e2d151dc",
+      "End": "ba173474234445eaad4c00f8ed6de20f",
+      "Id": "ed4191e45fd24c86a40c363cd90ff237"
+    },
+    {
+      "Start": "3270ba3dc9ea484fbc5594f0812312d2",
+      "End": "5db288dfdb664d89807ae1d45db42834",
+      "Id": "6b26c30d568f4ecebc070301869ce58d"
+    },
+    {
+      "Start": "36fe8a631da54f7b92990c9caa86a138",
+      "End": "0e9525ff1d81428ebb9507ef8f08ade2",
+      "Id": "f7a4d851b73e470285b71c764f0a836f"
+    },
+    {
+      "Start": "68e52cb7aacc4dc2a9e81c326bc6341e",
+      "End": "95e0b4ebe4f9497b89fcce247239bb4c",
+      "Id": "2f16fe5b1a0f48269cd146345fd31000"
+    },
+    {
+      "Start": "5ac31c9720ab45f8a7d5e613a91e313a",
+      "End": "82002fa22fa94306a8e7cb9cdbbfe16f",
+      "Id": "58bbb08459f54dca9d4146809af9b052"
+    }
+  ],
+  "Dependencies": [
+    "cbe6db5e-3248-46ff-87e4-b620a1abf252"
+  ],
+  "NodeLibraryDependencies": [
+    {
+      "Name": "Rhythm",
+      "Version": "2021.4.2",
+      "ReferenceType": "Package",
+      "Nodes": [
+        "feb7979ab20a4c9fab3275c15adf046d"
+      ]
+    },
+    {
+      "Name": "Orchid",
+      "Version": "206.3.0.7800",
+      "ReferenceType": "Package",
+      "Nodes": [
+        "ae5a1321469f4af487a9ef3b5b3a33e3"
+      ]
+    },
+    {
+      "Name": "Clockwork for Dynamo 2.x",
+      "Version": "2.3.0",
+      "ReferenceType": "Package",
+      "Nodes": [
+        "a2789bab506e458a865e465e8639e8f3"
+      ]
+    }
+  ],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 100.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": 161642.78045355264,
+      "EyeY": 33611.2867438151,
+      "EyeZ": 52754.011875224569,
+      "LookX": -7411.2496979205462,
+      "LookY": 1913.5664810465532,
+      "LookZ": 34309.205684208348,
+      "UpX": 0.056425630091174,
+      "UpY": 0.96363045320867191,
+      "UpZ": -0.26121351021294492
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "bfcbecc35bb34de5a6264bb30eabd85f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3738.0431618468911,
+        "Y": 789.640803519442
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "ʳʰʸᵗʰᵐ|Elements.SetParameterByNameTypeOrInstance",
+        "Id": "feb7979ab20a4c9fab3275c15adf046d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4518.0535143784909,
+        "Y": 738.947473356262
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Materials",
+        "Id": "ae5a1321469f4af487a9ef3b5b3a33e3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3150.9623360122187,
+        "Y": 782.98235229331522
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "0426860ada6446e1825954ea47424bf1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4145.5002732465309,
+        "Y": 739.00512724986606
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Solid.Volume",
+        "Id": "77764fc2a398471489e73456ba7190f8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2719.3772232133597,
+        "Y": 645.37511526143919
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "284106ce940c4c63827a7a3c3f06d173",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3384.4567935324512,
+        "Y": 675.48633179454009
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "DirectShape.ByGeometry",
+        "Id": "a0577963731f41f1a0497de344381488",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4010.6036310936456,
+        "Y": 553.67479792023448
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Element",
+        "Id": "73604ef54c9c4771a16061e720103dfe",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1069.3260307911594,
+        "Y": 522.2006599845937
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.Solids",
+        "Id": "ebadade6a1364068ab0d66ca32c76625",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1406.0404196098655,
+        "Y": 523.44147933768159
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "97af4b1e838344599750a09988cb79f9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": 3062.8314778095632,
+        "Y": 574.889070353678
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Volumes",
+        "Id": "af992fb4f882411ca20471aed460170e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3456.0362788336611,
+        "Y": 511.02391185007309
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Solids",
+        "Id": "4dc0519e60314e8ea67ff5bab0709611",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3456.4072912066813,
+        "Y": 591.3460653817
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "5e60614b3bd04dc9a6f2ef2459efd68b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3753.9621146784411,
+        "Y": 491.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Elements",
+        "Id": "a8969fde361e4f3db311e210fe6e2b0a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 710.29163554674642,
+        "Y": 710.35703042068963
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "b75379a46d084a66b77e702ce90f7eec",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2297.9139283094119,
+        "Y": 517.08818072483143
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Solid.Volume",
+        "Id": "b22c0b60a59a4e1dbcc2e008abab9528",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2686.6442364648542,
+        "Y": 400.65092299009393
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Level.Plane",
+        "Id": "a2789bab506e458a865e465e8639e8f3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1202.9705931011124,
+        "Y": 709.49502549326178
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.Flatten",
+        "Id": "67243d8e303540f29ebef5f0c571e996",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1455.2833532572397,
+        "Y": 707.63404401501987
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.Flatten",
+        "Id": "262ddc6faa48404384c6b43d7404a0fe",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1765.7617140682021,
+        "Y": 520.61168921235753
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "7f1beed7719a4118b43f0f7705dced47",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 572.39808934228881,
+        "Y": 963.95174048846934
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "All Elements of Category",
+        "Id": "9884fb4cfb5d4d32ba9403ba7cfde205",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 809.453544266707,
+        "Y": 963.95174048846934
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "4567d94ae6a84d8796aaa561f64cfaab",
+        "Title": "Generating names ",
+        "Nodes": [
+          "bfcbecc35bb34de5a6264bb30eabd85f"
+        ],
+        "Left": 3728.0431618468911,
+        "Top": 693.640803519442,
+        "Width": 186.05,
+        "Height": 189.0,
+        "FontSize": 36.0,
+        "InitialTop": 789.640803519442,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 86.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "ecf1ac902d214801ae01efafec32ca49",
+        "Title": "Setting \"Mark\" parameter with names of solids",
+        "Nodes": [
+          "feb7979ab20a4c9fab3275c15adf046d"
+        ],
+        "Left": 4508.0535143784909,
+        "Top": 642.947473356262,
+        "Width": 410.0,
+        "Height": 241.0,
+        "FontSize": 36.0,
+        "InitialTop": 738.947473356262,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 86.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "9425bd6e08bc4b88abd80cbb2dfaaad2",
+        "Title": "Select the generic Model",
+        "Nodes": [
+          "73604ef54c9c4771a16061e720103dfe",
+          "ebadade6a1364068ab0d66ca32c76625"
+        ],
+        "Left": 1059.3260307911594,
+        "Top": 469.2006599845937,
+        "Width": 563.71438881870608,
+        "Height": 172.0,
+        "FontSize": 36.0,
+        "InitialTop": 522.2006599845937,
+        "InitialHeight": 146.24081935308789,
+        "TextblockHeight": 43.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "f6462e3b23ca435baa0b19d34590deef",
+        "Title": "Organising the volume and solids",
+        "Nodes": [
+          "97af4b1e838344599750a09988cb79f9"
+        ],
+        "Left": 3052.8314778095632,
+        "Top": 434.889070353678,
+        "Width": 183.83666666666667,
+        "Height": 259.0,
+        "FontSize": 36.0,
+        "InitialTop": 574.889070353678,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 130.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "b61f55b7cc09402e99970beb9788bbb4",
+        "Title": "Check volumes w.r.t total volumes",
+        "Nodes": [
+          "5e60614b3bd04dc9a6f2ef2459efd68b"
+        ],
+        "Left": 3743.9621146784411,
+        "Top": 265.0,
+        "Width": 144.0,
+        "Height": 345.0,
+        "FontSize": 36.0,
+        "InitialTop": 491.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 216.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "a74a4b2bcb6f4cb19567c9361090f5de",
+        "Title": "Level input",
+        "Nodes": [
+          "a8969fde361e4f3db311e210fe6e2b0a"
+        ],
+        "Left": 700.29163554674642,
+        "Top": 657.35703042068963,
+        "Width": 195.0,
+        "Height": 172.0,
+        "FontSize": 36.0,
+        "InitialTop": 710.35703042068963,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 43.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "15cf5df99ccf43fda4296965cebabee3",
+        "Title": "First run without connecting direct shape. Second run with directshape connected.",
+        "Nodes": [],
+        "Left": 3970.5341588904921,
+        "Top": 296.74847873829282,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": -268.65699144076018,
+    "Y": 187.68545889907006,
+    "Zoom": 0.40176220268507079
+  }
+}

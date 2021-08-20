@@ -1,0 +1,9 @@
+Final_v5.dyn
+
+Using this script consist of two parts
+1. Run The script for refined ribs. Since all the elements are not convereted to solids 
+ and only portion of it is comverted into solids we need to run the script the second time.
+2. We delete the family that were used in the refined solids and re run the script for non refined solids.
+
+After all the geometries has been converted to into famillies each of the family can be edited 
+and all those extra lines and surfaces can be removed using void.
