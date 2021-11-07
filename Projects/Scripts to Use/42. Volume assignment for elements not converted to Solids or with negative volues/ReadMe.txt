@@ -1,0 +1,1 @@
+This script defines the volume of elements whose volume comes out to be negative in Dynamo.

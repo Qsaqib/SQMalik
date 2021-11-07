@@ -1,0 +1,16 @@
+----- Final cutting the ribs.dyn
+
+Using this script consist of two parts
+1. Run The script for refined ribs. Since all the elements are not converted to solids 
+ and only portion of it is comverted into solids we need to run the script the second time.
+2. We delete the family that were used in the refined solids and re run the script for non refined solids.
+
+After all the geometries has been converted to into famillies each of the family can be edited 
+and all those extra lines and surfaces can be removed using void.
+
+
+
+----- Final Surface Area of the ribs.dyn
+
+--- This script is used to calculate the formwork of Ribs, in which the direction is not maintained uniformly.
+--- This is a project based script BUT the methodology can be used for other cases as well.

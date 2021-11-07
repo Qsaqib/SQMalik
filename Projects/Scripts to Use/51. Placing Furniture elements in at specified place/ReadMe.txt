@@ -1,0 +1,1 @@
+This scripts lets you place furniture elements at the required place and orients them based on the direction of window elements.

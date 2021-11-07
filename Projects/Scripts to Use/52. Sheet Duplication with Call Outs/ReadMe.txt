@@ -1,0 +1,1 @@
+This script lets you create new callouts in different views using a base view class that already has callouts.
