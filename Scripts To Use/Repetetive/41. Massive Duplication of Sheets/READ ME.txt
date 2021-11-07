@@ -1,8 +1,0 @@
-Run the script. A pop up will appear to select the views.
-You can select the view you want to duplicate
-or select all.
-The duplicated elements will have a suffix
-"_DUP".
-
-If viewtype exists and not the instance
-then no view would be generated.
