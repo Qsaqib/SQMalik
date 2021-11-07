@@ -1,0 +1,5 @@
+Room Information Data
+
+---> This script is designed to put room information data such the Associated "Walls", "Ceilings", "Floors", "Roofs", "Wall Sweeps".
+---> These informations are stored in Room Parameters. Once you click on the room, you can look at the Different Parameters.
+---> You need to modify the parameter names in the script to the ones you have. 

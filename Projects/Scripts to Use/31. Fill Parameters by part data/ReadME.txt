@@ -1,0 +1,1 @@
+This Script is for Civil 3D users. Those who wish to update data to fittings or pipes etc can use this script.
