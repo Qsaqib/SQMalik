@@ -1,0 +1,345 @@
+{
+  "Uuid": "0cd8edac-af4f-4ece-adb4-ca9e3d4db14e",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Setting Type Parameter",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "[\"aaa\",\"bbb\",\"ccc\"];",
+      "Id": "8e19580d419a40ffa771c346203e9a34",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b49391e81667422893681efad37e3c20",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "#Copyright(c) 2015, Konrad K Sobon\n# @arch_laboratory, http://archi-lab.net\n\nimport clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\n\n# Import Element wrapper extension methods\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\n\n# Import geometry conversion extension methods\nclr.ImportExtensions(Revit.GeometryConversion)\n\n# Import DocumentManager and TransactionManager\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\ndoc = DocumentManager.Instance.CurrentDBDocument\nuiapp = DocumentManager.Instance.CurrentUIApplication\napp = uiapp.Application\n\n# Import RevitAPI\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\nimport System\nfrom System import Array\nfrom System.Collections.Generic import *\n\n# Import ToDSType(bool) extension method\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\n\nimport sys\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\nsys.path.append(pyt_path)\n\n#The inputs to this node will be stored as a list in the IN variable.\ndataEnteringNode = IN\n\n\nparamNames = IN[1]\nparamValues = IN[2]\nnames=IN[3]\nif isinstance(IN[0],list):\n\telist=IN[0]\nelse:\n\telist=[IN[0]]\n\nif isinstance(IN[3],list):\n\tenames=IN[3]\nelse:\n\tenames=[IN[3]]\n\nif isinstance(IN[1],list):\n\tparamNames=IN[1]\nelse:\n\tparamNames=[IN[1]]\n\t\nelements = []\noutList = []\n\n\nfor i in range(0,len(elist)):\n    elements.append(UnwrapElement(elist[i]))\n\nTransactionManager.Instance.EnsureInTransaction(doc)\nfinal=[]\nsub=[]\nfor i, values,name in zip(elements, paramValues, enames):\n\telemType = doc.GetElement(i.GetTypeId())\n\tparams = elemType.Parameters\n\tfor j in params:\n\t\tif j.Definition.Name == paramNames[0]:\n\t\t\tif name not in sub:\n\t\t\t\tsub.append(name)\n\t\t\t\tj.Set(values)\n\t\t\t\tfinal.append(i)\n\t\t\t\t\n\t\t\telse:\n\t\t\t\tfinal.append([])\t\t\t\n\t\t\t\tsub.append(name)\nTransactionManager.Instance.TransactionTaskDone()\n\n\n\nOUT = final\n",
+      "VariableInputPorts": true,
+      "Id": "043304bc0f1e49c89f04ec400db5f974",
+      "Inputs": [
+        {
+          "Id": "58eae8589541473f84e9de05e201cb6c",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ceabd7d027604e47b6b936b767e1b740",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e26474640f5849e4a0a0e50faa375a8f",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d2397490c6544f1da7f8d6d1861b2d16",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3fd2731aae4f4f49aff011a566af53f3",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757d4",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757d5",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757d6",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757d8",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757d9",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757da",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757de",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757df",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757e0",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757e3",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757e5",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-000757e6",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-00075848",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-00075849",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-0007584a",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-0007584b",
+        "ca90becb-9bcc-4e2c-999a-011dcb725b8c-00075855",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-000796da",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-00079906",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-00079908",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-00079909",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-0007995d",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-0007995f",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-000799e7",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-000799e8",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-000799e9",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-00079ae0",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-00079ae2",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-00079af2",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-00079af4",
+        "d646afe2-3c42-45bf-8b32-4d3fb6589e56-00079af5",
+        "3377811b-129c-48b6-aa80-7069df0bab55-0007ff73",
+        "3377811b-129c-48b6-aa80-7069df0bab55-00080189",
+        "3377811b-129c-48b6-aa80-7069df0bab55-000808d6",
+        "3377811b-129c-48b6-aa80-7069df0bab55-00080a9d",
+        "3377811b-129c-48b6-aa80-7069df0bab55-00080caf",
+        "70373cef-bc23-44da-bfcd-6ef94893b70c-00080fec",
+        "70373cef-bc23-44da-bfcd-6ef94893b70c-000817e7",
+        "70373cef-bc23-44da-bfcd-6ef94893b70c-0008193b",
+        "70373cef-bc23-44da-bfcd-6ef94893b70c-00081a8c",
+        "70373cef-bc23-44da-bfcd-6ef94893b70c-00081bdd",
+        "29f1293c-bfcc-4e3f-a709-6d23699860de-00087a2b",
+        "29f1293c-bfcc-4e3f-a709-6d23699860de-00087ae7",
+        "e1d8a539-bf23-4776-b04b-6ea39f91c609-00088132",
+        "e1d8a539-bf23-4776-b04b-6ea39f91c609-00088348",
+        "e1d8a539-bf23-4776-b04b-6ea39f91c609-00088429",
+        "4f849da0-9c89-4d74-8857-7fb1f547afce-0009acc1",
+        "4f849da0-9c89-4d74-8857-7fb1f547afce-0009adb3",
+        "4f849da0-9c89-4d74-8857-7fb1f547afce-0009ae72",
+        "4afbb1c8-5ea0-4007-8648-1ff8ade2ca05-000a6c85",
+        "4afbb1c8-5ea0-4007-8648-1ff8ade2ca05-000a6d01",
+        "4afbb1c8-5ea0-4007-8648-1ff8ade2ca05-000a6e8a",
+        "4afbb1c8-5ea0-4007-8648-1ff8ade2ca05-000a6ef6",
+        "4afbb1c8-5ea0-4007-8648-1ff8ade2ca05-000a702b",
+        "4afbb1c8-5ea0-4007-8648-1ff8ade2ca05-000a702c",
+        "4afbb1c8-5ea0-4007-8648-1ff8ade2ca05-000a702d",
+        "4afbb1c8-5ea0-4007-8648-1ff8ade2ca05-000a702e",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a77f2",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7838",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a788b",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a78bd",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7924",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a796a",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a79c8",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7a4f",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7a75",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7ac6",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7ae9",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7b34",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7b82",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7baf",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7c0c",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7c44",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7c8f",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7cb0",
+        "8e0e3b27-a75d-496d-9689-1d8dd234df52-000a7cf1"
+      ],
+      "Id": "ac105f90aaff4ca0a456a58a7acf0924",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "06831c9902fd428b9274a4c4bdab5560",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Keynote\";",
+      "Id": "54f9b034d9dd460a89798942e6b5564c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "97937f68b4234a20a73fb9e19dcc63c9",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.Name",
+      "Id": "db9b4098e2e241c799706f2a1f91ac8a",
+      "Inputs": [
+        {
+          "Id": "b99e6ed64580402bad8d37c8424bddd6",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "48cfd479f1274b46bf6cd21bde8efbc8",
+          "Name": "string",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the Name of the Element\n\nElement.Name: string"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "b49391e81667422893681efad37e3c20",
+      "End": "e26474640f5849e4a0a0e50faa375a8f",
+      "Id": "f7781fc34aa24d5ea061fdaf53135a70"
+    },
+    {
+      "Start": "06831c9902fd428b9274a4c4bdab5560",
+      "End": "58eae8589541473f84e9de05e201cb6c",
+      "Id": "bca40c20b9ab44ec80783234b896e724"
+    },
+    {
+      "Start": "06831c9902fd428b9274a4c4bdab5560",
+      "End": "b99e6ed64580402bad8d37c8424bddd6",
+      "Id": "258e26884da148e682e6c20ba474b266"
+    },
+    {
+      "Start": "97937f68b4234a20a73fb9e19dcc63c9",
+      "End": "ceabd7d027604e47b6b936b767e1b740",
+      "Id": "dccc3e70797b4ebabbc7cf2e8887a515"
+    },
+    {
+      "Start": "48cfd479f1274b46bf6cd21bde8efbc8",
+      "End": "d2397490c6544f1da7f8d6d1861b2d16",
+      "Id": "2c00c592436546d5bafa88d26573245b"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Parameter Values",
+        "Id": "8e19580d419a40ffa771c346203e9a34",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 144.18939656082438,
+        "Y": 913.9306885472455
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "043304bc0f1e49c89f04ec400db5f974",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 707.90034301790979,
+        "Y": 764.70378110083482
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Elements",
+        "Id": "ac105f90aaff4ca0a456a58a7acf0924",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 50.489530789229946,
+        "Y": 631.09870997017765
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Parameter Name",
+        "Id": "54f9b034d9dd460a89798942e6b5564c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 148.51804792428106,
+        "Y": 829.64747881459323
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.Name",
+        "Id": "db9b4098e2e241c799706f2a1f91ac8a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 392.69589259674626,
+        "Y": 631.8466697476623
+      }
+    ],
+    "Annotations": [],
+    "X": 116.37828412988847,
+    "Y": -511.59920757784448,
+    "Zoom": 0.94397461556444973
+  }
+}
